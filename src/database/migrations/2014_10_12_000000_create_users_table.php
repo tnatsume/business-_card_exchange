@@ -19,6 +19,9 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->string('tel')->comment('電話番号');
+            $table->boolean('billing_ads')->default(false)->comment('広告削除 課金');
+            $table->boolean('billing_exchenge')->fedalt(false)->comment('交換枚数上限撤廃 課金');
             $table->rememberToken();
             $table->timestamps();
         });

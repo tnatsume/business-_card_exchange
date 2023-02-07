@@ -21,6 +21,9 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'tel',
+        'billing_ads',
+        'billing_exchenge',
     ];
 
     /**
