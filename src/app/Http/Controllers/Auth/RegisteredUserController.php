@@ -12,6 +12,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Illuminate\View\View;
+use Propaganistas\LaravelPhone\Casts\RawPhoneNumberCast;
+use Propaganistas\LaravelPhone\Casts\E164PhoneNumberCast;
 
 class RegisteredUserController extends Controller
 {
@@ -30,18 +32,35 @@ class RegisteredUserController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
-        $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:'.User::class],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
-        ]);
+        if(strpos($request->email, '@') !== false){
+            $request->validate([
+                'name' => ['required', 'string', 'max:255'],
+                'email' => ['required', 'string', 'email', 'max:255', 'unique:'.User::class],
+                'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            ]);
+            $user = User::create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'tel'=> null,
+                'password' => Hash::make($request->password),
+            ]);
+    
+        } else{
+            $request->validate([
+                'name' => ['required', 'string', 'max:255'],
+                'email' => ['required | numeric | digits_between:8,11','unique:'.User::class],
+                'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            ]);
+            $user = User::create([
+                'name' => $request->name,
+                'email' => null,
+                'tel' => $request->email,
+                'password' => Hash::make($request->password),
+            ]);
 
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-        ]);
+        }
 
+       
         event(new Registered($user));
 
         Auth::login($user);

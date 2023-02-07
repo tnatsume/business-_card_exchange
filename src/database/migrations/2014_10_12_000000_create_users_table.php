@@ -16,12 +16,12 @@ return new class extends Migration
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('email')->unique();
+            $table->string('email')->unique()->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->string('tel')->comment('電話番号');
+            $table->string('tel')->comment('電話番号')->unique()->nullable();
             $table->boolean('billing_ads')->default(false)->comment('広告削除 課金');
-            $table->boolean('billing_exchenge')->fedalt(false)->comment('交換枚数上限撤廃 課金');
+            $table->boolean('billing_exchenge')->default(false)->comment('交換枚数上限撤廃 課金');
             $table->rememberToken();
             $table->timestamps();
         });
